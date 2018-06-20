@@ -4,7 +4,7 @@ import roi_pooling_op
 import roi_pooling_op_grad
 import tensorflow as tf
 import pdb
-
+from six.moves import xrange
 
 def weight_variable(shape):
   initial = tf.truncated_normal(shape, stddev=0.1)

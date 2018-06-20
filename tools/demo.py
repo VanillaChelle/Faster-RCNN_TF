@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os, sys, cv2
 import argparse
+from six.moves import xrange
 from networks.factory import get_network
 
 
@@ -64,8 +65,8 @@ def demo(sess, net, image_name):
     timer.tic()
     scores, boxes = im_detect(sess, net, im)
     timer.toc()
-    print ('Detection took {:.3f}s for '
-           '{:d} object proposals').format(timer.total_time, boxes.shape[0])
+    print (('Detection took {:.3f}s for '
+           '{:d} object proposals').format(timer.total_time, boxes.shape[0]))
 
     # Visualize detections for each class
     im = im[:, :, (2, 1, 0)]
@@ -107,7 +108,7 @@ if __name__ == '__main__':
 
     if args.model == ' ':
         raise IOError(('Error: Model not found.\n'))
-        
+
     # init session
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
     # load network
@@ -115,10 +116,10 @@ if __name__ == '__main__':
     # load model
     saver = tf.train.Saver(write_version=tf.train.SaverDef.V1)
     saver.restore(sess, args.model)
-   
+
     #sess.run(tf.initialize_all_variables())
 
-    print '\n\nLoaded network {:s}'.format(args.model)
+    print ('\n\nLoaded network {:s}'.format(args.model))
 
     # Warmup on a dummy image
     im = 128 * np.ones((300, 300, 3), dtype=np.uint8)
@@ -130,8 +131,8 @@ if __name__ == '__main__':
 
 
     for im_name in im_names:
-        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        print 'Demo for data/demo/{}'.format(im_name)
+        print ('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        print ('Demo for data/demo/{}'.format(im_name))
         demo(sess, net, im_name)
 
     plt.show()

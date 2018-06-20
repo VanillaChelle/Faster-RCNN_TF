@@ -12,6 +12,7 @@ from fast_rcnn.config import cfg
 from fast_rcnn.bbox_transform import bbox_transform
 from utils.cython_bbox import bbox_overlaps
 import PIL
+from six.moves import xrange
 
 def prepare_roidb(imdb):
     """Enrich the imdb's roidb by adding some derived quantities that
@@ -83,16 +84,16 @@ def add_bbox_regression_targets(roidb):
         means = sums / class_counts
         stds = np.sqrt(squared_sums / class_counts - means ** 2)
 
-    print 'bbox target means:'
-    print means
-    print means[1:, :].mean(axis=0) # ignore bg class
-    print 'bbox target stdevs:'
-    print stds
-    print stds[1:, :].mean(axis=0) # ignore bg class
+    print ('bbox target means:')
+    print (means)
+    print (means[1:, :].mean(axis=0)) # ignore bg class
+    print ('bbox target stdevs:')
+    print (stds)
+    print (stds[1:, :].mean(axis=0)) # ignore bg class
 
     # Normalize targets
     if cfg.TRAIN.BBOX_NORMALIZE_TARGETS:
-        print "Normalizing targets"
+        print ("Normalizing targets")
         for im_i in xrange(num_images):
             targets = roidb[im_i]['bbox_targets']
             for cls in xrange(1, num_classes):
@@ -100,7 +101,7 @@ def add_bbox_regression_targets(roidb):
                 roidb[im_i]['bbox_targets'][cls_inds, 1:] -= means[cls, :]
                 roidb[im_i]['bbox_targets'][cls_inds, 1:] /= stds[cls, :]
     else:
-        print "NOT normalizing targets"
+        print ("NOT normalizing targets")
 
     # These values will be needed for making predictions
     # (the predicts will need to be unnormalized and uncentered)

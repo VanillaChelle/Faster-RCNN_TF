@@ -10,6 +10,7 @@
 import numpy as np
 from fast_rcnn.config import cfg
 import utils.cython_bbox
+from six.moves import xrange
 
 def prepare_roidb(imdb):
     """Enrich the imdb's roidb by adding some derived quantities that
