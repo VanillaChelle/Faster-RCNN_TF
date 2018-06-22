@@ -47,7 +47,7 @@ class SolverWrapper(object):
         """
         net = self.net
 
-        if cfg.TRAIN.BBOX_REG and net.layers.has_key('bbox_pred'):
+        if cfg.TRAIN.BBOX_REG and 'bbox_pred' in net.layers:
             # save original values
             with tf.variable_scope('bbox_pred', reuse=True):
                 weights = tf.get_variable("weights")
@@ -73,7 +73,7 @@ class SolverWrapper(object):
         self.saver.save(sess, filename)
         print ('Wrote snapshot to: {:s}'.format(filename))
 
-        if cfg.TRAIN.BBOX_REG and net.layers.has_key('bbox_pred'):
+        if cfg.TRAIN.BBOX_REG and 'bbox_pred' in net.layers:
             with tf.variable_scope('bbox_pred', reuse=True):
                 # restore net to original state
                 sess.run(net.bbox_weights_assign, feed_dict={net.bbox_weights: orig_0})
@@ -162,8 +162,7 @@ class SolverWrapper(object):
 
             # Make one SGD update
             feed_dict={self.net.data: blobs['data'], self.net.im_info: blobs['im_info'], self.net.keep_prob: 0.5, \
-                           self.net.gt_boxes: blobs['gt_boxes']}
-
+                           self.net.gt_boxes: blobs['gt_boxes']}         
             run_options = None
             run_metadata = None
             if cfg.TRAIN.DEBUG_TIMELINE:
@@ -171,17 +170,15 @@ class SolverWrapper(object):
                 run_metadata = tf.RunMetadata()
 
             timer.tic()
-
             rpn_loss_cls_value, rpn_loss_box_value,loss_cls_value, loss_box_value, _ = sess.run([rpn_cross_entropy, rpn_loss_box, cross_entropy, loss_box, train_op],
                                                                                                 feed_dict=feed_dict,
                                                                                                 options=run_options,
                                                                                                 run_metadata=run_metadata)
-
             timer.toc()
 
             if cfg.TRAIN.DEBUG_TIMELINE:
                 trace = timeline.Timeline(step_stats=run_metadata.step_stats)
-                trace_file = open(str(long(time.time() * 1000)) + '-train-timeline.ctf.json', 'w')
+                trace_file = open(str(int(time.time() * 1000)) + '-train-timeline.ctf.json', 'w')
                 trace_file.write(trace.generate_chrome_trace_format(show_memory=False))
                 trace_file.close()
 
@@ -226,7 +223,6 @@ def get_data_layer(roidb, num_classes):
             layer = RoIDataLayer(roidb, num_classes)
     else:
         layer = RoIDataLayer(roidb, num_classes)
-
     return layer
 
 def filter_roidb(roidb):

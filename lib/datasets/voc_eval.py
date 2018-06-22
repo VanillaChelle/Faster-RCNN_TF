@@ -6,7 +6,7 @@
 
 import xml.etree.ElementTree as ET
 import os
-import cPickle
+import pickle
 import numpy as np
 import pdb
 def parse_rec(filename):
@@ -98,7 +98,7 @@ def voc_eval(detpath,
         os.mkdir(cachedir)
     cachefile = os.path.join(cachedir, 'annots.pkl')
     # read list of images
-    with open(imagesetfile, 'r') as f:
+    with open(imagesetfile, 'rb') as f:
         lines = f.readlines()
     imagenames = [x.strip() for x in lines]
 
@@ -106,18 +106,18 @@ def voc_eval(detpath,
         # load annots
         recs = {}
         for i, imagename in enumerate(imagenames):
-            recs[imagename] = parse_rec(annopath.format(imagename))
+            recs[imagename] = parse_rec(annopath.format(bytes.decode(imagename)))
             if i % 100 == 0:
-                print 'Reading annotation for {:d}/{:d}'.format(
-                    i + 1, len(imagenames))
+                print('Reading annotation for {:d}/{:d}'.format(
+                    i + 1, len(imagenames)))
         # save
-        print 'Saving cached annotations to {:s}'.format(cachefile)
-        with open(cachefile, 'w') as f:
-            cPickle.dump(recs, f)
+        print('Saving cached annotations to {:s}'.format(cachefile))
+        with open(cachefile, 'wb') as f:
+            pickle.dump(recs, f)
     else:
         # load
-        with open(cachefile, 'r') as f:
-            recs = cPickle.load(f)
+        with open(cachefile, 'rb') as f:
+            recs = pickle.load(f)
 
     # extract gt objects for this class
     class_recs = {}
@@ -134,11 +134,12 @@ def voc_eval(detpath,
 
     # read dets
     detfile = detpath.format(classname)
-    with open(detfile, 'r') as f:
+    with open(detfile, 'rb') as f:
         lines = f.readlines()
     if any(lines) == 1:
-
-        splitlines = [x.strip().split(' ') for x in lines]
+        splitlines = [x.strip().split(b' ') for x in lines]
+        print(splitlines)
+        print(type(splitlines))
         image_ids = [x[0] for x in splitlines]
         confidence = np.array([float(x[1]) for x in splitlines])
         BB = np.array([[float(z) for z in x[2:]] for x in splitlines])

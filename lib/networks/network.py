@@ -45,7 +45,7 @@ class Network(object):
         if data_path.endswith('.ckpt'):
             saver.restore(session, data_path)
         else:
-            data_dict = np.load(data_path).item()
+            data_dict = np.load(data_path,encoding = 'latin1').item()
             for key in data_dict:
                 with tf.variable_scope(key, reuse=True):
                     for subkey in data_dict[key]:
@@ -185,7 +185,9 @@ class Network(object):
         if isinstance(input[0], tuple):
             input[0] = input[0][0]
         with tf.variable_scope(name) as scope:
-
+#             print(type(input[0]))
+#             print(type(input[1]))
+#             print(type(classes))
             rois,labels,bbox_targets,bbox_inside_weights,bbox_outside_weights = tf.py_func(proposal_target_layer_py,[input[0],input[1],classes],[tf.float32,tf.float32,tf.float32,tf.float32,tf.float32])
 
             rois = tf.reshape(rois,[-1,5] , name = 'rois') 

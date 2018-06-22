@@ -86,7 +86,7 @@ if __name__ == '__main__':
     print ('Output will be saved to `{:s}`'.format(output_dir))
 
     device_name = '/{}:{:d}'.format(args.device,args.device_id)
-    print device_name
+    print (device_name)
 
     network = get_network(args.network_name)
     print ('Use network `{:s}` in training'.format(args.network_name))

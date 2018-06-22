@@ -287,6 +287,7 @@ def test_net(sess, net, imdb, weights_filename , max_per_image=300, thresh=0.05,
         roidb = imdb.roidb
 
     for i in xrange(num_images):
+#     for i in xrange(10):
         # filter out any ground truth boxes
         if cfg.TEST.HAS_RPN:
             box_proposals = None

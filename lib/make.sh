@@ -13,7 +13,7 @@ cd roi_pooling_layer
 if [ -d "$CUDA_PATH" ]; then
         nvcc -std=c++11 -c -o roi_pooling_op.cu.o roi_pooling_op_gpu.cu.cc \
                 -I $TF_INC -D GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC $CXXFLAGS --expt-relaxed-constexpr\
-                -arch=sm_37
+                -arch=sm_61
 
         g++ -std=c++11 -shared -o roi_pooling.so roi_pooling_op.cc  -D_GLIBCXX_USE_CXX11_ABI=0  \
                 roi_pooling_op.cu.o -I $TF_INC -I $TF_INC/external/nsync/public  -L $TF_LIB -D GOOGLE_CUDA=1  -ltensorflow_framework -fPIC $CXXFLAGS \

@@ -67,9 +67,9 @@ if __name__ == '__main__':
     print('Using config:')
     pprint.pprint(cfg)
 
-    while not os.path.exists(args.model) and args.wait:
-        print('Waiting for {} to exist...'.format(args.model))
-        time.sleep(10)
+#     while not os.path.exists(args.model) and args.wait:
+#         print('Waiting for {} to exist...'.format(args.model))
+#         time.sleep(10)
 
     weights_filename = os.path.splitext(os.path.basename(args.model))[0]
 
@@ -92,6 +92,6 @@ if __name__ == '__main__':
     saver = tf.train.Saver()
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
     saver.restore(sess, args.model)
-    print ('Loading model weights from {:s}').format(args.model)
+    print (('Loading model weights from {:s}').format(args.model))
 
     test_net(sess, network, imdb, weights_filename)
