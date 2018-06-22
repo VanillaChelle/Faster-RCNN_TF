@@ -138,8 +138,6 @@ def voc_eval(detpath,
         lines = f.readlines()
     if any(lines) == 1:
         splitlines = [x.strip().split(b' ') for x in lines]
-        print(splitlines)
-        print(type(splitlines))
         image_ids = [x[0] for x in splitlines]
         confidence = np.array([float(x[1]) for x in splitlines])
         BB = np.array([[float(z) for z in x[2:]] for x in splitlines])
