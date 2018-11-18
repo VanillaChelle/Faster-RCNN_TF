@@ -22,7 +22,28 @@ CLASSES = ('__background__',
 
 #CLASSES = ('__background__','person','bike','motorbike','car','bus')
 
-def vis_detections(im, class_name, dets,ax, thresh=0.5):
+def save_detections(im, image_name, class_name, dets, thresh=0.5):
+    inds = np.where(dets[:, -1] >= thresh)[0]
+    if len(inds) == 0:
+        return
+
+    shape = im.shape
+    for i in inds:
+        x1, y1, x2, y2 = dets[i, :4]
+        score = dets[i ,-1]
+
+        box = np.array([x1, y1, x1, y2, x2, y2, x2, y1])
+        box = box.reshape([-1, 4, 2]).astype(np.int32)
+        cv2.drawContours(im, box, -1, (255, 255, 0), 3)
+
+        s = '{:s} {:.3f}'.format(class_name, score)
+        p1 = (int(y1-5), int(x1))
+        cv2.putText(im, s, p1[::-1], cv2.FONT_HERSHEY_SIMPLEX, 0.5, (31, 119, 180), 1)
+    # origin point is left top
+
+    cv2.imwrite('test_' + image_name, im)
+
+def vis_detections(im, image_name, class_name, dets,ax, thresh=0.5):
     """Draw detected bounding boxes."""
     inds = np.where(dets[:, -1] >= thresh)[0]
     if len(inds) == 0:
@@ -49,7 +70,8 @@ def vis_detections(im, class_name, dets,ax, thresh=0.5):
                   fontsize=14)
     plt.axis('off')
     plt.tight_layout()
-    plt.draw()
+    # plt.draw()
+    plt.savefig('test_' + image_name)
 
 
 def demo(sess, net, image_name):
@@ -69,9 +91,9 @@ def demo(sess, net, image_name):
            '{:d} object proposals').format(timer.total_time, boxes.shape[0]))
 
     # Visualize detections for each class
-    im = im[:, :, (2, 1, 0)]
-    fig, ax = plt.subplots(figsize=(12, 12))
-    ax.imshow(im, aspect='equal')
+    # im = im[:, :, (2, 1, 0)]
+    #fig, ax = plt.subplots(figsize=(12, 12))
+    #ax.imshow(im, aspect='equal')
 
     CONF_THRESH = 0.8
     NMS_THRESH = 0.3
@@ -83,7 +105,8 @@ def demo(sess, net, image_name):
                           cls_scores[:, np.newaxis])).astype(np.float32)
         keep = nms(dets, NMS_THRESH)
         dets = dets[keep, :]
-        vis_detections(im, cls, dets, ax, thresh=CONF_THRESH)
+        # vis_detections(im, image_name, cls, dets, ax, thresh=CONF_THRESH)
+        save_detections(im, image_name, cls, dets, thresh=CONF_THRESH)
 
 def parse_args():
     """Parse input arguments."""
@@ -126,14 +149,15 @@ if __name__ == '__main__':
     for i in xrange(2):
         _, _= im_detect(sess, net, im)
 
-    im_names = ['000456.jpg', '000542.jpg', '001150.jpg',
-                '001763.jpg', '004545.jpg']
-
+    # im_names = ['000456.jpg', '000542.jpg', '001150.jpg',
+    #             '001763.jpg', '004545.jpg']
+    im_names = ['128901.jpg', '138301.jpg', 'STV2K_ts_0001.jpg']
+  
 
     for im_name in im_names:
         print ('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         print ('Demo for data/demo/{}'.format(im_name))
         demo(sess, net, im_name)
 
-    plt.show()
+    # plt.show()
 
